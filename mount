@@ -1,0 +1,9 @@
+#!/bin/sh
+selfdir="$(dirname -- "$(realpath -- "$0")")"
+cd -- "$selfdir/.."
+
+mkdir -p mnt
+
+# ulimit -v 1000000
+# exec screen -dmS rclone-mount -- sh -c 'fusermount -u mnt; ./s3-cred rclone -vv mount --use-server-modtime --cache-dir rclone-cache/ --vfs-cache-mode full --buffer-size 0M --attr-timeout 60s :s3:// mnt'
+exec screen -dmS rclone-mount -- "$selfdir/s3-cred" sh -c 'fusermount -u mnt; rclone -vv mount --use-server-modtime --cache-dir rclone-cache/ --vfs-cache-mode full :s3:// mnt'

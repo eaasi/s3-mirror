@@ -1,0 +1,13 @@
+#!/bin/sh
+selfdir="$(dirname -- "$(realpath -- "$0")")"
+cd -- "$selfdir/.."
+
+mkdir -p mnt
+
+PATH="$selfdir:$PATH"
+if ! type goofys; then
+  curl -fL "https://github.com/kahing/goofys/releases/download/v0.24.0/goofys" | install /dev/stdin "$selfdir/goofys"
+fi
+
+# ulimit -v 1000000
+exec screen -dmS goofys-mount -- "$selfdir/s3-cred" sh -c 'fusermount -u mnt; "$0/goofys" --endpoint "$AWS_ENDPOINT_URL" -f --debug_s3 eaasi mnt; sh' "$selfdir"
